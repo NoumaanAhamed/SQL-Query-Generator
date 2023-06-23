@@ -5,25 +5,39 @@ from langchain.llms import OpenAI
 from langchain.chains import LLMChain
 import os
 
-load_dotenv()
-st.set_page_config(page_title="SQL Query Generator")
-st.header("Get The SQL✐")
+def main():
+    load_dotenv()
+    # print(os.environ["OPENAI_API_KEY"])
 
-question = st.text_input("Generate a SQL Query using English")
+    if os.getenv("OPENAI_API_KEY") is None or os.getenv("OPENAI_API_KEY") == "":
+        print("OPENAI_API_KEY is not set")
+        exit(1)
+    else:
+        print("OPENAI_API_KEY is set")
 
-sql_template = '''Convert the following natural language description into a SQL query: {sql_description} '''
+    st.set_page_config(page_title="SQL Query Generator")
+    st.header("Get The SQL ✐ ")
 
-prompt = PromptTemplate(
-    input_variables=['sql_description'],
-    template=sql_template
-)
+    sql_template = '''Convert the following natural language description into a SQL query: {sql_description} '''
 
-# prompt.format(sql_description='select all rows')
-
-llm = OpenAI(temperature=0.5)
-SQLChain = LLMChain(llm=llm,prompt=prompt)
-
-answer = SQLChain.run(question)
-st.write(answer)
+    prompt = PromptTemplate(
+            input_variables=['sql_description'],
+            template=sql_template
+        )
+    
+    llm = OpenAI(temperature=0)
+    SQLChain = LLMChain(llm=llm,prompt=prompt)
 
 
+    question = st.text_input("Generate a SQL Query using English")
+
+    if question is not None:
+
+        # prompt.format(sql_description='select all rows')
+        answer = SQLChain.run(question)
+        st.write(answer)
+
+if __name__ == "__main__":
+    main()
+
+#
